@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Player</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .player {
+      background: #2c2c2c;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 300px;
+      text-align: center;
+    }
+
+    .cover {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .title {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .controls button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .controls button:hover {
+      color: #1db954;
+    }
+    .progress {
+      width: 100%;
+      height: 5px;
+      background: #555;
+      margin-top: 15px;
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .progress-filled {
+      height: 100%;
+      width: 0;
+      background: #1db954;
+    }
+  </style>
+</head>
+<body>
+  <div class="player">
+    <div class="title" id="title">Song Title</div>
+    <audio id="audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    <div class="controls">
+      <button onclick="prevSong()">⏮️</button>
+      <button onclick="togglePlay()" id="play">▶️</button>
+      <button onclick="nextSong()">⏭️</button>
+    </div>
+    <div class="progress" onclick="seek(event)">
+      <div class="progress-filled" id="progress-filled"></div>
+    </div>
+  </div>
+
+  <script>
+    const songs = [
+      {
+        title: "Kathithi BGM",
+        src: "kaththi.mp3",
+        cover: "#"
+      },
+      {
+        title: "Jawan BGM",
+        src: "Jawan.mp3",
+        cover: "#"
+      },
+      {
+        title: "Chuttamalle Song",
+        src: "chuttamalle.mp3",
+        cover: "#"
+      }
+    ];
+
+    let currentSongIndex = 0;
+    const audio = document.getElementById('audio');
+    const title = document.getElementById('title');
+    const cover = document.getElementById('cover');
+    const playBtn = document.getElementById('play');
+    const progressFilled = document.getElementById('progress-filled');
+
+    function loadSong(song) {
+      title.textContent = song.title;
+      audio.src = song.src;
+      cover.src = song.cover;
+    }
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        playBtn.textContent = '⏸️';
+      } else {
+        audio.pause();
+        playBtn.textContent = '▶️';
+      }
+    }
+
+    function nextSong() {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      loadSong(songs[currentSongIndex]);
+      audio.play();
+      playBtn.textContent = '⏸️';
+    }
+
+    function prevSong() {
+      currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      loadSong(songs[currentSongIndex]);
+      audio.play();
+      playBtn.textContent = '⏸️';
+    }
+
+    function updateProgress() {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressFilled.style.width = percent + '%';
+    }
+
+    function seek(e) {
+      const progress = document.querySelector('.progress');
+      const percent = e.offsetX / progress.offsetWidth;
+      audio.currentTime = percent * audio.duration;
+    }
+
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('ended', nextSong);
+
+    // Initialize with first song
+    loadSong(songs[currentSongIndex]);
+  </script>
+</body>
+</html>
